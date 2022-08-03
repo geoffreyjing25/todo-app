@@ -3,21 +3,26 @@ import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import styled from "styled-components";
 
-import styles from "../styles/Home.module.css";
-
 const Wrapper = styled.div`
-    font-size: 3em;
-    text-align: center;
-    color: palevioletred;
-  `;
+  font-size: 3em;
+  text-align: center;
+  color: palevioletred;
+`;
 const MainHeader = styled.h1`
-  color: ${props => props.color && props.color};
+  color: ${(props) => props.color && props.color};
 `;
-const Inputs = styled.input` 
-    width:300px; 
-    height:30px;
-    font-size:30px;
+const Inputs = styled.input`
+  width: 300px;
+  height: 30px;
+  font-size: 30px;
 `;
+
+//
+const ListItem = styled.li`
+  color: ${(props) => (props.done ? "lightblue" : "blue")};
+  text-decoration: ${(props) => props.done && "line-through"}; ;
+`;
+
 const Home = () => {
   const [todoItem, setTodoItem] = useState("");
   const [items, setItems] = useState([]);
@@ -28,7 +33,7 @@ const Home = () => {
     }
   };
 
-  const handleAdd = () => { 
+  const handleAdd = () => {
     if (todoItem) {
       setItems([
         {
@@ -39,7 +44,7 @@ const Home = () => {
         ...items,
       ]);
 
-      setTodoItem(""); 
+      setTodoItem("");
     }
   };
 
@@ -65,45 +70,46 @@ const Home = () => {
       </div>
 
       <div>
+        {/* naming convention: Inputs > InputItem */}
         <Inputs
           type="text"
           value={todoItem}
           onChange={(e) => setTodoItem(e.target.value)}
           onKeyDown={handleEnter}
-        /> 
+        />
       </div>
- 
+
+      {/* nice implementation to have done items at the bottom of the list with different styling.
+Try to find a solution to achieve the same result without the redundancy of filtering and mapping
+*/}
       <ul>
         {items
           .filter(({ done }) => !done)
           .map(({ id, message }) => (
-            <li
-              key={id}
-              className={cx(styles.item)}
-              onClick={() => handleDone(id)}
-            >
+            <ListItem key={id} onClick={() => handleDone(id)}>
               {message}
-            </li>
+            </ListItem>
           ))}
 
         {items
           .filter(({ done }) => done)
           .map(({ id, message }) => (
-            <li
-              key={id}
-              className={cx(styles.item, styles.done)}
-              onClick={() => handleDone(id)}
-            >
+            <ListItem done key={id} onClick={() => handleDone(id)}>
               {message}
-            </li>
+            </ListItem>
           ))}
       </ul>
 
       <div>
-      <h6>Made by Geoffrey Jing</h6>
+        <h6>Made by Geoffrey Jing</h6>
       </div>
     </Wrapper>
   );
 };
- 
-export default Home
+
+export default Home;
+
+// great work so far, would love to see react-hook-form in use with these validation in place:
+// minLength: 1 char, maxLength: 100 chars, has to be set as "required", and can accept only strings - no numbers
+
+// deleted previous .css files so all prev styles are gone & have to rebuild with Styled Components
