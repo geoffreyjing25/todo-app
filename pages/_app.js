@@ -1,8 +1,11 @@
+import GlobalStyles from "../util/globalStyles";
+
 const MyApp = ({ Component, pageProps }) => {
   return (
-    <div>
+    <>
+      <GlobalStyles />
       <Component {...pageProps} />
-    </div>
+    </>
   );
 };
 

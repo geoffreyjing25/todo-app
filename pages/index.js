@@ -1,12 +1,18 @@
-import cx from "classnames";
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import styled from "styled-components";
 
-const Wrapper = styled.div`
+const StyledWrapper = styled.div`
   font-size: 3em;
   text-align: center;
   color: palevioletred;
+  background-color: pink;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  // vh - view height; vw - view width
+  min-height: 100vh;
 `;
 const MainHeader = styled.h1`
   color: ${(props) => props.color && props.color};
@@ -64,9 +70,9 @@ const Home = () => {
   };
 
   return (
-    <Wrapper>
+    <StyledWrapper>
       <div>
-        <MainHeader color="red">Todo App</MainHeader>
+        <MainHeader color="purple">Todo App</MainHeader>
       </div>
 
       <div>
@@ -103,7 +109,7 @@ Try to find a solution to achieve the same result without the redundancy of filt
       <div>
         <h6>Made by Geoffrey Jing</h6>
       </div>
-    </Wrapper>
+    </StyledWrapper>
   );
 };
 
