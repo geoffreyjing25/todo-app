@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import styled from "styled-components";
 
@@ -17,7 +18,7 @@ const StyledWrapper = styled.div`
 const MainHeader = styled.h1`
   color: ${(props) => props.color && props.color};
 `;
-const Inputs = styled.input`
+const InputItem = styled.input`
   width: 300px;
   height: 30px;
   font-size: 30px;
@@ -30,6 +31,10 @@ const ListItem = styled.li`
 `;
 
 const Home = () => {
+  const { register, handleSubmit, watch, formState: { errors } } = useForm();
+  const onSubmit = data => console.log(data);
+
+  console.log(watch("example")); // watch input value by passing the name of it
   const [todoItem, setTodoItem] = useState("");
   const [items, setItems] = useState([]);
 
@@ -77,12 +82,30 @@ const Home = () => {
 
       <div>
         {/* naming convention: Inputs > InputItem */}
-        <Inputs
+        <form onSubmit={handleSubmit(onSubmit)}>
+        <InputItem
+          {...register("todo", { 
+            required: true,
+          minLength: {
+            value: 1, 
+            message: "Min length is 1"
+          },
+          maxLength: {
+            value: 100,
+            message: "Min length is 100"
+          }
+          })}
+          placeholder="Todo Here"
+          />
+          <p>{errors.todo?.message}</p>
+        {/* <Inputs
           type="text"
           value={todoItem}
           onChange={(e) => setTodoItem(e.target.value)}
           onKeyDown={handleEnter}
-        />
+        /> */}
+        <input type="submit" />
+    </form>
       </div>
 
       {/* nice implementation to have done items at the bottom of the list with different styling.
