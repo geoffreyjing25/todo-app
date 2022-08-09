@@ -7,7 +7,10 @@ const StyledWrapper = styled.div`
   font-size: 3em;
   text-align: center;
   color: palevioletred;
-  background-color: pink;
+  color: #A683E3;
+  // background-color: #E4E9FD;
+  background-color: #E4E9FD;
+  background-image: -webkit-linear-gradient(65deg, #A683E3 50%, #E4E9FD 50%);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -15,8 +18,16 @@ const StyledWrapper = styled.div`
   // vh - view height; vw - view width
   min-height: 100vh;
 `;
+const StyledDiv = styled.div`
+  background-color: #A683E3;
+  width: 20%;
+  margin: auto;
+  top: 20%;
+  text-align: center;
+`;
 const MainHeader = styled.h1`
   color: ${(props) => props.color && props.color};
+  font-size: 60px;
 `;
 const InputItem = styled.input`
   width: 300px;
@@ -24,40 +35,36 @@ const InputItem = styled.input`
   font-size: 30px;
 `;
 
-//
 const ListItem = styled.li`
-  color: ${(props) => (props.done ? "lightblue" : "blue")};
+  color: ${(props) => (props.done ? "lightblue" : "blue")}; 
   text-decoration: ${(props) => props.done && "line-through"}; ;
 `;
 
 const Home = () => {
   const { register, handleSubmit, watch, formState: { errors } } = useForm();
-  const onSubmit = data => console.log(data);
+  const onSubmit = data => {
+    console.log(data);
+    setItems([
+      {
+        id: uuidv4(),
+        message: data.todo,
+        done: false,
+      },
+      ...items,
+    ]);
 
-  console.log(watch("example")); // watch input value by passing the name of it
-  const [todoItem, setTodoItem] = useState("");
+    // setTodoItem("");
+  };
+  
+  console.log(watch("example"));
+  // const [todoItem, setTodoItem] = useState("");
   const [items, setItems] = useState([]);
-
-  const handleEnter = (event) => {
-    if (event.key === "Enter") {
-      handleAdd();
-    }
-  };
-
-  const handleAdd = () => {
-    if (todoItem) {
-      setItems([
-        {
-          id: uuidv4(),
-          message: todoItem,
-          done: false,
-        },
-        ...items,
-      ]);
-
-      setTodoItem("");
-    }
-  };
+  
+  // const handleEnter = (event) => {
+  //   if (event.key === "Enter") {
+  //     handleAdd();
+  //   }
+  // };
 
   const handleDone = (id) => {
     const _items = items.map((item) => {
@@ -66,22 +73,24 @@ const Home = () => {
           ...item,
           done: !item.done,
         };
-      }
-
+      } 
+      
       return item;
+    })
+    .sort((x, y) => {
+      return (x.done === y.done)? 0 : x.done? 1 : -1;
     });
-
+    
     setItems(_items);
   };
 
   return (
     <StyledWrapper>
-      <div>
-        <MainHeader color="purple">Todo App</MainHeader>
-      </div>
+      <StyledDiv>
+        <MainHeader color="#fff">Todo App</MainHeader>
+      </StyledDiv> 
 
       <div>
-        {/* naming convention: Inputs > InputItem */}
         <form onSubmit={handleSubmit(onSubmit)}>
         <InputItem
           {...register("todo", { 
@@ -92,41 +101,34 @@ const Home = () => {
           },
           maxLength: {
             value: 100,
-            message: "Min length is 100"
+            message: "Max length is 100"
           }
           })}
           placeholder="Todo Here"
           />
           <p>{errors.todo?.message}</p>
-        {/* <Inputs
-          type="text"
-          value={todoItem}
-          onChange={(e) => setTodoItem(e.target.value)}
-          onKeyDown={handleEnter}
-        /> */}
-        <input type="submit" />
     </form>
-      </div>
+    </div>
 
       {/* nice implementation to have done items at the bottom of the list with different styling.
 Try to find a solution to achieve the same result without the redundancy of filtering and mapping
 */}
       <ul>
         {items
-          .filter(({ done }) => !done)
-          .map(({ id, message }) => (
-            <ListItem key={id} onClick={() => handleDone(id)}>
+          // .filter(({ done }) => !done)
+          .map(({ id, message, done }) => (
+            <ListItem key={id} onClick={() => handleDone(id)} done={done}>
               {message}
             </ListItem>
           ))}
 
-        {items
+        {/* {items
           .filter(({ done }) => done)
           .map(({ id, message }) => (
             <ListItem done key={id} onClick={() => handleDone(id)}>
               {message}
             </ListItem>
-          ))}
+          ))} */}
       </ul>
 
       <div>
