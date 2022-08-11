@@ -20,7 +20,7 @@ const StyledWrapper = styled.div`
 `;
 const StyledDiv = styled.div`
   background-color: #A683E3;
-  width: 20%;
+  width: 350px;
   margin: auto;
   top: 20%;
   text-align: center;
@@ -31,7 +31,7 @@ const MainHeader = styled.h1`
 `;
 const InputItem = styled.input`
   width: 300px;
-  height: 30px;
+  height: 30px;  
   font-size: 30px;
 `;
 
@@ -40,8 +40,17 @@ const ListItem = styled.li`
   text-decoration: ${(props) => props.done && "line-through"}; ;
 `;
 
+// change later to a different color
+const ParagraphItem = styled.p`
+  color: purple 
+`
+
+const UnorderListItem = styled.ul`
+  list-style: none;
+`
+
 const Home = () => {
-  const { register, handleSubmit, watch, formState: { errors } } = useForm();
+  const { register, handleSubmit, watch, reset, formState: { errors } } = useForm();
   const onSubmit = data => {
     console.log(data);
     setItems([
@@ -52,19 +61,11 @@ const Home = () => {
       },
       ...items,
     ]);
-
-    // setTodoItem("");
+    reset();
   };
   
   console.log(watch("example"));
-  // const [todoItem, setTodoItem] = useState("");
   const [items, setItems] = useState([]);
-  
-  // const handleEnter = (event) => {
-  //   if (event.key === "Enter") {
-  //     handleAdd();
-  //   }
-  // };
 
   const handleDone = (id) => {
     const _items = items.map((item) => {
@@ -84,6 +85,10 @@ const Home = () => {
     setItems(_items);
   };
 
+  const handleDelete = (id) => {
+
+  }
+
   return (
     <StyledWrapper>
       <StyledDiv>
@@ -93,43 +98,36 @@ const Home = () => {
       <div>
         <form onSubmit={handleSubmit(onSubmit)}>
         <InputItem
-          {...register("todo", { 
-            required: true,
-          minLength: {
-            value: 1, 
-            message: "Min length is 1"
-          },
-          maxLength: {
-            value: 100,
-            message: "Max length is 100"
-          }
-          })}
-          placeholder="Todo Here"
+            {...register("todo", {
+              required: true,
+              pattern: {
+                value: /^[a-zA-Z ]+$/,
+                message: "Accepting only letters",
+              },
+              minLength: {
+                value: 2,
+                message: "Min length is 2",
+              },
+              maxLength: {
+                value: 100,
+                message: "Max length is 100",
+              },
+            })}
+            placeholder="Todo Here"
           />
-          <p>{errors.todo?.message}</p>
+          <ParagraphItem>{errors.todo?.message}</ParagraphItem>
     </form>
     </div>
-
-      {/* nice implementation to have done items at the bottom of the list with different styling.
-Try to find a solution to achieve the same result without the redundancy of filtering and mapping
-*/}
-      <ul>
+      <UnorderListItem>
         {items
-          // .filter(({ done }) => !done)
           .map(({ id, message, done }) => (
-            <ListItem key={id} onClick={() => handleDone(id)} done={done}>
+            <ListItem key={id}>
               {message}
+              <button onClick={() => handleDone(id)} done={done}>Done</button>
+              <button type="submit">Delete</button>
             </ListItem>
           ))}
-
-        {/* {items
-          .filter(({ done }) => done)
-          .map(({ id, message }) => (
-            <ListItem done key={id} onClick={() => handleDone(id)}>
-              {message}
-            </ListItem>
-          ))} */}
-      </ul>
+      </UnorderListItem>
 
       <div>
         <h6>Made by Geoffrey Jing</h6>
@@ -140,7 +138,3 @@ Try to find a solution to achieve the same result without the redundancy of filt
 
 export default Home;
 
-// great work so far, would love to see react-hook-form in use with these validation in place:
-// minLength: 1 char, maxLength: 100 chars, has to be set as "required", and can accept only strings - no numbers
-
-// deleted previous .css files so all prev styles are gone & have to rebuild with Styled Components
